@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang = "en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet", href="/dist/app.css">
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <title>SecondTask</title>
+</head>
+<body>
+    <section class="main">
+        <div class="main__title" id="response">            
+        </div>
+    </section>
+    <section class="mode">
+        <div class="container">
+            <div class="mode__item">
+                <div class="mode__item__voices">
+                    <input type="radio" name="icon" id="list"/>
+                    <label for="list">
+                        <span
+                          class="iconify fa-bars"
+                          data-icon="ic:sharp-playlist-play"
+                          data-inline="true">
+                        </span>
+                        <span class="mode__item__voices-title">
+                            All voices
+                        </span>
+                      </label>                
+                </div>
+                <div class="mode__item__microphone">
+                    <input type="radio" name="icon" id="micro"/>
+                    <label for="micro">
+                        <span
+                          class="iconify fa-microphone"
+                          data-icon="mdi:microphone"
+                          data-inline="true"
+                        ></span>
+                        <span class="mode__item__microphone-title">
+                            Microphone
+                        </span>
+                      </label>
+                </div>
+                <div class="mode__item__stream">
+                    <input type="radio" name="icon" id="stream"/>
+                    <label for="stream">
+                        <span
+                          class="iconify fa-music"
+                          data-icon="ic:baseline-speaker"
+                          data-inline="true"
+                        ></span>
+                        <span class="mode__item__stream-title">
+                            Stream
+                        </span>  
+                    </label>               
+                </div>
+            </div>
+        </div>
+    </section>
+<script src="/dist/app.js"></script>
+</body>
+</html>

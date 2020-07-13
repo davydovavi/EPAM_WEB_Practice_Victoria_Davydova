@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" , href="/dist/app.css">
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <title>SecondTask</title>
+</head>
+
+<body>
+    <style>
+        .main__title {
+            font: 200% Roboto, sans-serif;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            position: absolute;
+            transform: translate(-50%, -100%)
+        }
+
+        .container {
+            width: 100%;
+            height: 13%;
+            position: absolute;
+            bottom: 0;
+            box-shadow: 0 0 25px rgba(204, 204, 204, 0.5);
+            text-align: center;
+            white-space: nowrap
+        }
+
+        .mode__item {
+            display: inline-flex;
+            margin: 0.5em -2em 0 0.5em
+        }
+
+        .mode__item__voices-title {
+            left: -70px
+        }
+
+        .mode__item__microphone-title {
+            left: -70px
+        }
+
+        .mode__item__stream-title {
+            left: -60px
+        }
+
+        input[type="radio"] {
+            -webkit-appearance: none
+        }
+
+        label {
+            color: #737373;
+            font-size: 50px
+        }
+
+        label>span {
+            font-size: 14px;
+            position: relative;
+            top: 33px;
+            font-family: Roboto, sans-serif
+        }
+
+        input[type="radio"]:checked+label {
+            color: #159788
+        }
+    </style>
+    <section class="main">
+        <div class="main__title" id="response">
+        </div>
+    </section>
+    <section class="mode">
+        <div class="container">
+            <div class="mode__item">
+                <div class="mode__item__voices">
+                    <input type="radio" name="icon" id="list" />
+                    <label for="list">
+                        <span class="iconify fa-bars" data-icon="ic:sharp-playlist-play" data-inline="true">
+                        </span>
+                        <span class="mode__item__voices-title">
+                            All voices
+                        </span>
+                    </label>
+                </div>
+                <div class="mode__item__microphone">
+                    <input type="radio" name="icon" id="micro" />
+                    <label for="micro">
+                        <span class="iconify fa-microphone" data-icon="mdi:microphone" data-inline="true"></span>
+                        <span class="mode__item__microphone-title">
+                            Microphone
+                        </span>
+                    </label>
+                </div>
+                <div class="mode__item__stream">
+                    <input type="radio" name="icon" id="stream" />
+                    <label for="stream">
+                        <span class="iconify fa-music" data-icon="ic:baseline-speaker" data-inline="true"></span>
+                        <span class="mode__item__stream-title">
+                            Stream
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+    <audio id="tempAudio" src="https://www.soundjay.com/communication/sounds/writing-signature-1.mp3"
+        autoplay="false"></audio>
+    <script src="/dist/app.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</body>
+
+</html>

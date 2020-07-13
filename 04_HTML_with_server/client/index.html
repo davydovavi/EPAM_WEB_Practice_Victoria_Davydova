@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" , href="/dist/app.css">
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <title>FourthTask</title>
+</head>
+
+<body>
+    <style>
+        .main__title {
+            font: 200% Roboto, sans-serif;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            position: absolute;
+            transform: translate(-50%, -100%)
+        }
+
+        .container {
+            width: 100%;
+            height: 13%;
+            position: absolute;
+            bottom: 0;
+            box-shadow: 0 0 25px rgba(204, 204, 204, 0.5);
+            text-align: center;
+            white-space: nowrap
+        }
+
+        .mode__item {
+            display: inline-flex;
+            margin: 0.5em -2em 0 0.5em
+        }
+
+        .mode__item__voices-title {
+            left: -70px
+        }
+
+        .mode__item__microphone-title {
+            left: -70px
+        }
+
+        .mode__item__stream-title {
+            left: -60px
+        }
+
+        input[type="radio"] {
+            -webkit-appearance: none
+        }
+
+        label {
+            color: #737373;
+            font-size: 50px
+        }
+
+        label>span {
+            font-size: 14px;
+            position: relative;
+            top: 33px;
+            font-family: Roboto, sans-serif
+        }
+
+        input[type="radio"]:checked+label {
+            color: #159788
+        }
+    </style>
+    <section class="main">
+        <div class="main__title" id="response">
+        </div>
+    </section>
+    <section class="mode">
+        <div class="container">
+            <div class="mode__item">
+                <div class="mode__item__voices">
+                    <input type="radio" name="icon" id="list" />
+                    <label for="list">
+                        <span class="iconify fa-bars" data-icon="ic:sharp-playlist-play" data-inline="true">
+                        </span>
+                        <span class="mode__item__voices-title">
+                            All voices
+                        </span>
+                    </label>
+                </div>
+                <div class="mode__item__microphone">
+                    <input type="radio" name="icon" id="micro" />
+                    <label for="micro">
+                        <span class="iconify fa-microphone" data-icon="mdi:microphone" data-inline="true"></span>
+                        <span class="mode__item__microphone-title">
+                            Microphone
+                        </span>
+                    </label>
+                </div>
+                <div class="mode__item__stream">
+                    <input type="radio" name="icon" id="stream" />
+                    <label for="stream">
+                        <span class="iconify fa-music" data-icon="ic:baseline-speaker" data-inline="true"></span>
+                        <span class="mode__item__stream-title">
+                            Stream
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+    <audio id="tempAudio" src="https://www.soundjay.com/communication/sounds/writing-signature-1.mp3"
+        autoplay="false"></audio>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <!--<script src="index.js"></script>-->
+    <script>
+        $(function () {
+            var socket = io();
+            socket.on('playAudio', () => {
+                var audio = document.getElementById("tempAudio");
+                audio.play();
+            });
+            socket.on('audioMessage', function (audioChunks) {
+                const audioBlob = new Blob(audioChunks);
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            });
+            socket.on('allAudioMessages', function (allAudios) {
+                //var output = "Active: new-mode";
+                //$('#response').text(output);
+                const response = document.getElementById('response');
+                response.innerHTML = '';
+                const ul = document.createElement('ul');
+                response.appendChild(ul);
+                const data = JSON.parse(allAudios);
+                //let data = JSON.stringify(allAudios);
+                for (let i = 0; i < data.length; i++) {
+                    const li = document.createElement('li');
+                    const audioBlob = new Blob([new Uint8Array(data[i].audioBlob[0].data).buffer]);
+                    li.innerHTML = `Voice: ${data[i].timeStamp.slice(0, -38)}`;
+                    ul.appendChild(li);
+                    li.addEventListener('click', () => {
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audio = new Audio(audioUrl);
+                        audio.play();
+                    })
+                }
+            });
+
+            socket.on('getStream', function (allAudios) {
+                const data = JSON.parse(allAudios);
+                //let data = JSON.stringify(allAudios);
+                for (let i = 0; i < data.length; i++) {
+                    const audioBlob = new Blob([new Uint8Array(data[i].audioBlob[0].data).buffer]);
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                }
+            });
+            $('#micro').click(function (e) {
+                var output = "Active: speaker-mode";
+                response.innerHTML = output;
+                //let div = document.createElement('div');
+                //div.id = 'messages';
+                let start = document.createElement('button');
+                start.id = 'start';
+                start.innerHTML = 'Start';
+                let stop = document.createElement('button');
+                stop.id = 'stop';
+                stop.innerHTML = 'Stop';
+                //response.appendChild(div);
+                response.appendChild(start);
+                response.appendChild(stop);
+                navigator.mediaDevices.getUserMedia({
+                        audio: true,
+                        video: false
+                    })
+                    .then(stream => {
+                        const mediaRecorder = new MediaRecorder(stream);
+
+                        document.getElementById("start").addEventListener('click', function () {
+                            mediaRecorder.start();
+                            socket.emit('startRecording');
+                        });
+                        let audioChunks = [];
+                        mediaRecorder.addEventListener("dataavailable", function (event) {
+                            audioChunks.push(event.data);
+                        });
+
+                        document.getElementById("stop").addEventListener('click', function () {
+                            mediaRecorder.stop();
+                        });
+
+                        mediaRecorder.addEventListener("stop", function () {
+                            socket.emit('audioMessage', audioChunks);
+                            console.log("audiochunks emited");
+                            audioChunks = [];
+                        });
+                    });
+            });
+            $('#stream').click(function (e) {
+                var output = "Active: listener-mode";
+                $('#response').text(output);
+                socket.emit("getAudioMessages");
+
+            });
+            $('#list').click(function (e) {
+                var output = "Active: all voices";
+                $('#response').text(output);
+                socket.emit("getAllMessages");
+            });
+        })
+    </script>
+</body>
+
+</html>
